@@ -4,7 +4,8 @@ export enum Opcodes {
     SUB = "sub",
     SUBI = "subi",
     J = "j",
-    BEQ = "beq"
+    BEQ = "beq",
+    STAHL = "stahl"
 }
 
 export interface IProcessor {

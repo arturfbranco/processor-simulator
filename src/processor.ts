@@ -84,10 +84,10 @@ export class Processor implements IProcessor {
 
         const [opcode, operand1, operand2, operand3] = this.pipeline.decode?.unprocessedInstruction?.split(" ") || [];
         this.pipeline.decode = {
-            opcode: opcode,
-            operand1: operand1,
-            operand2: operand2,
-            operand3: operand3
+            opcode,
+            operand1,
+            operand2,
+            operand3
         }
     }
 
@@ -115,6 +115,8 @@ export class Processor implements IProcessor {
             case Opcodes.BEQ:
                 this.alu.beq(this);
                 break;
+            case Opcodes.STAHL:
+                break;    
             default:
                 throw new Error("Invalid opcode");
         }        
