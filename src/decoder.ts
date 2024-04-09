@@ -53,7 +53,7 @@ export class Decoder implements IDecoder {
         const operand2 = this.getRegisterValue(processor, decodeStage.operand2);
         const operand3 = this.getRegisterValue(processor, decodeStage.operand3);
         decodeStage.aluInputs = [operand2, operand3];
-        decodeStage.handler = processor.getAlu().add;
+        decodeStage.handler = processor.getAlu().add.bind(processor.getAlu());
     }
 
     private decodeAddi(processor: IProcessor): void {
@@ -64,7 +64,7 @@ export class Decoder implements IDecoder {
         const operand2 = this.getRegisterValue(processor, decodeStage.operand2);
         const operand3 = parseInt(decodeStage.operand3 || "");
         decodeStage.aluInputs = [operand2, operand3];
-        decodeStage.handler = processor.getAlu().addi;
+        decodeStage.handler = processor.getAlu().addi.bind(processor.getAlu());
     }
 
     private decodeSub(processor: IProcessor): void {
@@ -75,7 +75,7 @@ export class Decoder implements IDecoder {
         const operand2 = this.getRegisterValue(processor, decodeStage.operand2);
         const operand3 = this.getRegisterValue(processor, decodeStage.operand3);
         decodeStage.aluInputs = [operand2, operand3];
-        decodeStage.handler = processor.getAlu().sub;
+        decodeStage.handler = processor.getAlu().sub.bind(processor.getAlu());
     }
 
     private decodeSubi(processor: IProcessor): void {
@@ -86,7 +86,7 @@ export class Decoder implements IDecoder {
         const operand2 = this.getRegisterValue(processor, decodeStage.operand2);
         const operand3 = parseInt(decodeStage.operand3 || "");
         decodeStage.aluInputs = [operand2, operand3];
-        decodeStage.handler = processor.getAlu().subi;
+        decodeStage.handler = processor.getAlu().subi.bind(processor.getAlu());
     }
 
     private decodeJ(processor: IProcessor): void {
@@ -107,7 +107,7 @@ export class Decoder implements IDecoder {
         const operand2 = this.getRegisterValue(processor, decodeStage.operand2);
         const operand3 = parseInt(decodeStage.operand3 || "");
         decodeStage.aluInputs = [operand1, operand2, operand3];
-        decodeStage.handler = processor.getAlu().beq;
+        decodeStage.handler = processor.getAlu().beq.bind(processor.getAlu());
     }
 
     private decodeStahl(processor: IProcessor): void {

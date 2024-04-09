@@ -1,4 +1,5 @@
 import { Alu } from "./alu";
+import { BypassBuffer } from "./bypassBuffer";
 import { Decoder } from "./decoder";
 import { IAlu, IDecoder, ILoader, IProcessor, IRegisterBank } from "./interfaces";
 import { Processor } from "./processor";
@@ -10,7 +11,7 @@ const buildProcessor = (): IProcessor => {
     const programFilePath: string = process.argv[2];
     const loader: ILoader = new ProgramLoader(programFilePath);
     const registerBank: IRegisterBank = new RegisterBank();
-    const alu: IAlu = new Alu();
+    const alu: IAlu = new Alu(new BypassBuffer());
     const decoder: IDecoder = new Decoder();
     return new Processor(loader, registerBank, alu, decoder);
 }

@@ -57,6 +57,15 @@ export interface IAlu {
     stahl(processor: IProcessor): void;
 }
 
+export interface IBypassBuffer {
+    storeInBuffer(register?: number, value?: number): void;
+    readFromBuffer(register: number): number | undefined;
+}
+
+export interface IBypassBufferData {
+    register?: number;
+    value?: number;
+}
 export interface IDecoder {
     decode(processor: IProcessor): void;
 }
