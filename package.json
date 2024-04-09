@@ -9,11 +9,11 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/node": "^20.12.5",
     "@types/prompt-sync": "^4.2.3",
     "typescript": "^5.4.4"
   },
   "dependencies": {
-    "@types/node": "^20.12.5",
     "prompt-sync": "^4.2.0"
   }
 }
