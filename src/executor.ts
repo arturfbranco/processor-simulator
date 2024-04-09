@@ -25,9 +25,13 @@ export const main = (): void => {
         
         prompt("Press any key to start the clock.\n");
         
-        while(true){
+        let shouldLoop = true; 
+        while(shouldLoop){
             clock(processor);
-            prompt("Press any key to continue the clock or press 'q' to quit.\n");
+            const input = prompt("Press any key to continue the clock or press 'q' to quit.\n");
+            if(input === 'q'){
+                shouldLoop = false;
+            }
         }
     } catch(e){
         console.error(e);
