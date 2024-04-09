@@ -1,4 +1,5 @@
-import { ILoader, IProcessor, IRegisterBank, Opcodes, PipelineStages } from "./interfaces";
+import { IAlu, ILoader, IProcessor, IRegisterBank, Opcodes, PipelineStages } from "./interfaces";
+import { cloneDeep } from "lodash";
 
 export class Processor implements IProcessor {
 
@@ -7,12 +8,14 @@ export class Processor implements IProcessor {
     private programLoader: ILoader;
     private registers: IRegisterBank;
     private pipeline: PipelineStages;
+    private alu: IAlu;
 
-    constructor(loader: ILoader, registerBank: IRegisterBank) {
+    constructor(loader: ILoader, registerBank: IRegisterBank, alu: IAlu) {
         this.pc = 0;
         this.programMemory = null;
         this.programLoader = loader;
         this.registers = registerBank;
+        this.alu = alu;
         this.pipeline = {
             fetch: null,
             decode: null,
@@ -33,6 +36,22 @@ export class Processor implements IProcessor {
         this.pushInstructions();
     }
 
+    public getPipeline(): PipelineStages {
+        return this.pipeline;
+    }
+
+    public getRegisters(): IRegisterBank {
+        return this.registers;
+    }
+
+    public getPc(): number {
+        return this.pc;
+    }
+
+    public setPc(pc: number): void {
+        this.pc = pc;
+    }
+
     private runStages(): void {
         this.runFetch();
         this.runDecode();
@@ -48,7 +67,7 @@ export class Processor implements IProcessor {
         }
 
         if(this.pc >= this.programMemory.length){
-            throw new Error("Program counter out of bounds");
+            return;
         }
 
         this.pipeline.fetch = {
@@ -63,7 +82,7 @@ export class Processor implements IProcessor {
             return;
         }
 
-        const [opcode, operand1, operand2, operand3] = this.pipeline.fetch?.unprocessedInstruction?.split(" ") || [];
+        const [opcode, operand1, operand2, operand3] = this.pipeline.decode?.unprocessedInstruction?.split(" ") || [];
         this.pipeline.decode = {
             opcode: opcode,
             operand1: operand1,
@@ -74,80 +93,31 @@ export class Processor implements IProcessor {
 
     private runExecute(): void {
 
-        if(this.pipeline.execute === null){
+        if(this.pipeline.execute === null || !this.pipeline.execute.opcode){
             return;
         }
-        switch(this.pipeline.decode?.opcode){
+        switch(this.pipeline.execute?.opcode){
             case Opcodes.ADD:
-                this.add();
+                this.alu.add(this);
                 break;
             case Opcodes.ADDI:
-                this.addi();
+                this.alu.addi(this);
                 break;
             case Opcodes.SUB:
-                this.sub();
+                this.alu.sub(this);
                 break;
             case Opcodes.SUBI:
-                this.subi();
+                this.alu.subi(this);
                 break;
             case Opcodes.J:
-                this.j();
+                this.alu.j(this);
                 break;
             case Opcodes.BEQ:
-                this.beq();
+                this.alu.beq(this);
                 break;
             default:
                 throw new Error("Invalid opcode");
         }        
-    }
-
-    private add(): void {
-        const operand1 = this.registers.readFromRegister(parseInt(this.pipeline.decode?.operand2 || ""));
-        const operand2 = this.registers.readFromRegister(parseInt(this.pipeline.decode?.operand3 || ""));
-        const result = operand1 + operand2;
-        this.pipeline.execute = {
-            result: result
-        }
-    }
-
-    private addi(): void {
-        const operand1 = this.registers.readFromRegister(parseInt(this.pipeline.decode?.operand2 || ""));
-        const operand2 = parseInt(this.pipeline.decode?.operand3 || "");
-        const result = operand1 + operand2;
-        this.pipeline.execute = {
-            result: result
-        }
-    }
-
-    private sub(): void {
-        const operand1 = this.registers.readFromRegister(parseInt(this.pipeline.decode?.operand2 || ""));
-        const operand2 = this.registers.readFromRegister(parseInt(this.pipeline.decode?.operand3 || ""));
-        const result = operand1 - operand2;
-        this.pipeline.execute = {
-            result: result
-        }
-    }
-
-    private subi(): void {
-        const operand1 = this.registers.readFromRegister(parseInt(this.pipeline.decode?.operand2 || ""));
-        const operand2 = parseInt(this.pipeline.decode?.operand3 || "");
-        const result = operand1 - operand2;
-        this.pipeline.execute = {
-            result: result
-        }
-    }
-
-    private j(): void {
-        this.pc = parseInt(this.pipeline.decode?.operand1 || "");
-    }
-
-    private beq(): void {
-        const operand1 = this.registers.readFromRegister(parseInt(this.pipeline.decode?.operand1 || ""));
-        const operand2 = this.registers.readFromRegister(parseInt(this.pipeline.decode?.operand2 || ""));
-        const operand3 = parseInt(this.pipeline.decode?.operand3 || "");
-        if(operand1 === operand2){
-            this.pc += operand3;
-        }
     }
 
     private runMemory(): void {
@@ -160,7 +130,7 @@ export class Processor implements IProcessor {
         }
 
         if(this.shouldStoreInRegister() && typeof this.pipeline.writeback.result === "number"){
-            this.registers.storeInRegister(parseInt(this.pipeline.decode?.operand1 || ""), this.pipeline.writeback.result);
+            this.registers.storeInRegister(parseInt(this.pipeline.writeback?.operand1 || ""), this.pipeline.writeback.result);
         }
     }
 
@@ -172,10 +142,10 @@ export class Processor implements IProcessor {
     }
 
     private pushInstructions(): void {
-        this.pipeline.writeback = this.pipeline.memory;
-        this.pipeline.memory = this.pipeline.execute;
-        this.pipeline.execute = this.pipeline.decode;
-        this.pipeline.decode = this.pipeline.fetch;
+        this.pipeline.writeback = cloneDeep(this.pipeline.memory);
+        this.pipeline.memory = cloneDeep(this.pipeline.execute);
+        this.pipeline.execute = cloneDeep(this.pipeline.decode);
+        this.pipeline.decode = cloneDeep(this.pipeline.fetch);
         this.pipeline.fetch = null;
     }
     

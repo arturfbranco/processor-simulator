@@ -20,4 +20,8 @@ export class RegisterBank implements IRegisterBank {
         }
         return this.registers[register];
     }
+
+    public printRegisters(): void {
+        console.log(this.registers);
+    }
 }

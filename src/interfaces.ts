@@ -1,15 +1,19 @@
 export enum Opcodes {
-    ADD = "ADD",
-    ADDI = "ADDI",
-    SUB = "SUB",
-    SUBI = "SUBI",
-    J = "J",
-    BEQ = "BEQ"
+    ADD = "add",
+    ADDI = "addi",
+    SUB = "sub",
+    SUBI = "subi",
+    J = "j",
+    BEQ = "beq"
 }
 
 export interface IProcessor {
     loadProgram(): void;
-    clockPulse(): void;    
+    clockPulse(): void;
+    getRegisters(): IRegisterBank;
+    getPipeline(): PipelineStages;
+    getPc(): number;
+    setPc(pc: number): void;
 }
 
 export interface ILoader {
@@ -19,6 +23,7 @@ export interface ILoader {
 export interface IRegisterBank {
     storeInRegister(register: number, value: number): void;
     readFromRegister(register: number): number;
+    printRegisters(): void;
 }
 
 export interface Instruction {
@@ -36,5 +41,14 @@ export interface PipelineStages {
     execute: Instruction | null;
     memory: Instruction | null;
     writeback: Instruction | null;
+}
+
+export interface IAlu {
+    add(processor: IProcessor): void;
+    addi(processor: IProcessor): void;
+    sub(processor: IProcessor): void;
+    subi(processor: IProcessor): void;
+    j(processor: IProcessor): void;
+    beq(processor: IProcessor): void;
 }
 

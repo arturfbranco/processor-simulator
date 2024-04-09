@@ -1,4 +1,5 @@
-import { ILoader, IProcessor, IRegisterBank } from "./interfaces";
+import { Alu } from "./alu";
+import { IAlu, ILoader, IProcessor, IRegisterBank } from "./interfaces";
 import { Processor } from "./processor";
 import { ProgramLoader } from "./programLoader";
 import { RegisterBank } from "./registerBank";
@@ -8,7 +9,8 @@ const buildProcessor = (): IProcessor => {
     const programFilePath: string = process.argv[2];
     const loader: ILoader = new ProgramLoader(programFilePath);
     const registerBank: IRegisterBank = new RegisterBank();
-    return new Processor(loader, registerBank);
+    const alu: IAlu = new Alu();
+    return new Processor(loader, registerBank, alu);
 }
 
 const clock = (processor: IProcessor): void => {
@@ -31,6 +33,7 @@ export const main = (): void => {
             const input = prompt("Press any key to continue the clock or press 'q' to quit.\n");
             if(input === 'q'){
                 shouldLoop = false;
+                processor.getRegisters().printRegisters();
             }
         }
     } catch(e){
