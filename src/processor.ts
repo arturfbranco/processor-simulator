@@ -1,4 +1,4 @@
-import { IAlu, ILoader, IProcessor, IRegisterBank, Opcodes, PipelineStages } from "./interfaces";
+import { IAlu, IDecoder, ILoader, IProcessor, IRegisterBank, Opcodes, PipelineStages } from "./interfaces";
 import { cloneDeep } from "lodash";
 
 export class Processor implements IProcessor {
@@ -9,13 +9,15 @@ export class Processor implements IProcessor {
     private registers: IRegisterBank;
     private pipeline: PipelineStages;
     private alu: IAlu;
+    private decoder: IDecoder;
 
-    constructor(loader: ILoader, registerBank: IRegisterBank, alu: IAlu) {
+    constructor(loader: ILoader, registerBank: IRegisterBank, alu: IAlu, decoder: IDecoder) {
         this.pc = 0;
         this.programMemory = null;
         this.programLoader = loader;
         this.registers = registerBank;
         this.alu = alu;
+        this.decoder = decoder;
         this.pipeline = {
             fetch: null,
             decode: null,
@@ -44,6 +46,10 @@ export class Processor implements IProcessor {
         return this.registers;
     }
 
+    public getAlu(): IAlu {
+        return this.alu;
+    }
+
     public getPc(): number {
         return this.pc;
     }
@@ -53,6 +59,7 @@ export class Processor implements IProcessor {
     }
 
     private runStages(): void {
+        console.log(`Running stages for PC: ${this.pc}...\n`);
         this.runFetch();
         this.runDecode();
         this.runExecute();
@@ -77,49 +84,14 @@ export class Processor implements IProcessor {
     }
 
     private runDecode(): void {
-
-        if(this.pipeline.decode === null){
-            return;
-        }
-
-        const [opcode, operand1, operand2, operand3] = this.pipeline.decode?.unprocessedInstruction?.split(" ") || [];
-        this.pipeline.decode = {
-            opcode,
-            operand1,
-            operand2,
-            operand3
-        }
+        this.decoder.decode(this);
     }
 
     private runExecute(): void {
-
-        if(this.pipeline.execute === null || !this.pipeline.execute.opcode){
+        if(this.pipeline.execute === null || !this.pipeline.execute.handler){
             return;
         }
-        switch(this.pipeline.execute?.opcode){
-            case Opcodes.ADD:
-                this.alu.add(this);
-                break;
-            case Opcodes.ADDI:
-                this.alu.addi(this);
-                break;
-            case Opcodes.SUB:
-                this.alu.sub(this);
-                break;
-            case Opcodes.SUBI:
-                this.alu.subi(this);
-                break;
-            case Opcodes.J:
-                this.alu.j(this);
-                break;
-            case Opcodes.BEQ:
-                this.alu.beq(this);
-                break;
-            case Opcodes.STAHL:
-                break;    
-            default:
-                throw new Error("Invalid opcode");
-        }        
+        this.pipeline.execute.handler(this);  
     }
 
     private runMemory(): void {
@@ -153,5 +125,9 @@ export class Processor implements IProcessor {
     
     private printPipeline(): void {
         console.log(this.pipeline);
+    }
+
+    private printPc(): void {
+        console.log(`PC: ${this.pc}\n`);
     }
 }

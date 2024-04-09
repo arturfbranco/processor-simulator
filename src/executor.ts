@@ -1,5 +1,6 @@
 import { Alu } from "./alu";
-import { IAlu, ILoader, IProcessor, IRegisterBank } from "./interfaces";
+import { Decoder } from "./decoder";
+import { IAlu, IDecoder, ILoader, IProcessor, IRegisterBank } from "./interfaces";
 import { Processor } from "./processor";
 import { ProgramLoader } from "./programLoader";
 import { RegisterBank } from "./registerBank";
@@ -10,7 +11,8 @@ const buildProcessor = (): IProcessor => {
     const loader: ILoader = new ProgramLoader(programFilePath);
     const registerBank: IRegisterBank = new RegisterBank();
     const alu: IAlu = new Alu();
-    return new Processor(loader, registerBank, alu);
+    const decoder: IDecoder = new Decoder();
+    return new Processor(loader, registerBank, alu, decoder);
 }
 
 const clock = (processor: IProcessor): void => {

@@ -13,6 +13,7 @@ export interface IProcessor {
     clockPulse(): void;
     getRegisters(): IRegisterBank;
     getPipeline(): PipelineStages;
+    getAlu(): IAlu;
     getPc(): number;
     setPc(pc: number): void;
 }
@@ -33,6 +34,8 @@ export interface Instruction {
     operand1?: string;
     operand2?: string;
     operand3?: string;
+    handler?: (processor: IProcessor) => void;
+    aluInputs?: number[];
     result?: number;
 }
 
@@ -51,5 +54,10 @@ export interface IAlu {
     subi(processor: IProcessor): void;
     j(processor: IProcessor): void;
     beq(processor: IProcessor): void;
+    stahl(processor: IProcessor): void;
+}
+
+export interface IDecoder {
+    decode(processor: IProcessor): void;
 }
 
