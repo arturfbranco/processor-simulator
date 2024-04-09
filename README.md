@@ -1,9 +1,11 @@
 processor-simulator
 
-Setup in VS Code:
+Requires NodeJS installed.
 
-1. Run "npm install" in terminal.
-2. Run "npx tsc -w" in terminal.
-3. Write assembly code in program.txt.
-4. In VS Code's debug tab, click Launch Program.
+Setup:
+
+1. npm run build.
+2. To run the program in terminal: node build/index.js <relative path to program>
+   To run the program in VS Code: in Debug tab, click Launch Program.
+  
 
