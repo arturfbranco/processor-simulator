@@ -118,7 +118,13 @@ export class Alu implements IAlu {
         const usedOperand2 = operand2FromBuffer || operand2;
 
         if(usedOperand1 === usedOperand2){
-            processor.setPc(processor.getPc() + operand3);
+            console.log("Branch taken!\n");
+            processor.setPc(processor.getPc() + operand3 - 1);
+
+            if(!Boolean(process.argv[3])){
+                processor.getPipeline().fetch = null;
+                processor.getPipeline().decode = null;
+            }
         }
         this.storeResultInBypassBuffer(processor);
     }

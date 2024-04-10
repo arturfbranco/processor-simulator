@@ -96,6 +96,7 @@ export class Decoder implements IDecoder {
         }
         const operand1 = parseInt(decodeStage.operand1 || "");
         processor.setPc(operand1);
+        processor.getPipeline().fetch = null;
     }
 
     private decodeBeq(processor: IProcessor): void {
