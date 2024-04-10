@@ -16,3 +16,5 @@ v1: processor version without any hazard management.
 
 v2: processor with data hazard management using bypass.
 
+v3: processor with data hazard (bypass) and control hazard (branch not taken) management.
+
