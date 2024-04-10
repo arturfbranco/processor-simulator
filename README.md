@@ -11,6 +11,8 @@ Setup:
 
 
 Branches:
+
 v1: processor version without any hazard management.
-v2: processor with data hazard management with bypass.
+
+v2: processor with data hazard management using bypass.
 
