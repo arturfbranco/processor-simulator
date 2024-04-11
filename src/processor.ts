@@ -10,6 +10,7 @@ export class Processor implements IProcessor {
     private pipeline: PipelineStages;
     private alu: IAlu;
     private decoder: IDecoder;
+    private halt: boolean;
 
     constructor(loader: ILoader, registerBank: IRegisterBank, alu: IAlu, decoder: IDecoder) {
         this.pc = 0;
@@ -25,6 +26,7 @@ export class Processor implements IProcessor {
             memory: null,
             writeback: null
         }
+        this.halt = false;
     }
 
     public loadProgram(): void {
@@ -54,6 +56,10 @@ export class Processor implements IProcessor {
         return this.pc;
     }
 
+    public getHalt(): boolean {
+        return this.halt;
+    }
+
     public setPc(pc: number): void {
         this.pc = pc;
     }
@@ -74,6 +80,7 @@ export class Processor implements IProcessor {
         }
 
         if(this.pc >= this.programMemory.length){
+            this.halt = true;
             return;
         }
 

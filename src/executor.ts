@@ -34,7 +34,8 @@ export const main = (): void => {
         while(shouldLoop){
             clock(processor);
             const input = prompt("Press any key to continue the clock or press 'q' to quit.\n");
-            if(input === 'q'){
+
+            if(input === 'q' || processor.getHalt() && processor.getPipeline().writeback === null){
                 shouldLoop = false;
                 processor.getRegisters().printRegisters();
             }
