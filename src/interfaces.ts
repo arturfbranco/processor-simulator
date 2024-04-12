@@ -17,6 +17,7 @@ export interface IProcessor {
     getPc(): number;
     setPc(pc: number): void;
     getHalt(): boolean;
+    emptyPipeline(): boolean;
 }
 
 export interface ILoader {
