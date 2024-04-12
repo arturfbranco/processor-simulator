@@ -64,6 +64,15 @@ export class Processor implements IProcessor {
         this.pc = pc;
     }
 
+    public emptyPipeline(): boolean {
+        if (this.pipeline.fetch === null && this.pipeline.decode === null &&
+            this.pipeline.execute === null && this.pipeline.memory === null &&
+            this.pipeline.writeback === null) {
+                return true;
+            }
+        return false;
+    }
+
     private runStages(): void {
         console.log(`Running stages for PC: ${this.pc}...\n`);
         this.runFetch();
