@@ -16,6 +16,8 @@ export interface IProcessor {
     getAlu(): IAlu;
     getPc(): number;
     setPc(pc: number): void;
+    getHalt(): boolean;
+    emptyPipeline(): boolean;
 }
 
 export interface ILoader {
