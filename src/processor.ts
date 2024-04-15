@@ -75,11 +75,11 @@ export class Processor implements IProcessor {
 
     private runStages(): void {
         console.log(`Running stages for PC: ${this.pc}...\n`);
-        this.runFetch();
-        this.runDecode();
-        this.runExecute();
-        this.runMemory();
         this.runWriteback();
+        this.runMemory();
+        this.runExecute();
+        this.runDecode();
+        this.runFetch();
     }
 
     private runFetch(): void {
