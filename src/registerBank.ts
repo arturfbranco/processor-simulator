@@ -22,6 +22,6 @@ export class RegisterBank implements IRegisterBank {
     }
 
     public printRegisters(): void {
-        console.log(this.registers);
+        console.log(`Register bank:\n${this.registers.join(" | ")}`);
     }
 }

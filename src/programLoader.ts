@@ -12,7 +12,7 @@ export class ProgramLoader implements ILoader {
     public loadFromFile(): string[] {
         const fullPath = resolve.resolve(__dirname, this.filePath);
         const program = fs.readFileSync(fullPath, 'utf8').split('\n');
-        console.log(`Loading program:\n ${program}`);
+        console.log(`Loading program:\n ${program.join(" | ")}`);
         return program
     }
 }   
