@@ -18,7 +18,7 @@ const buildProcessor = (): IProcessor => {
     return new Processor(loader, registerBank, alu, decoder);
 }
 
-const displayMeny = (): string => {
+const displayMenu = (): string => {
     console.log(`
     1. Press ENTER to continue.\n
     2. Press 'n' + ENTER to run all program non stop.\n
@@ -38,7 +38,7 @@ export const main = (): void => {
         prompt("Press ENTER to load the program from file.\n");
         processor.loadProgram();
 
-        const firstInput = displayMeny();
+        const firstInput = displayMenu();
 
         let shouldStop = true;
         
@@ -53,7 +53,7 @@ export const main = (): void => {
             clock(processor);
             let input;
             if(shouldStop){
-                input = displayMeny();
+                input = displayMenu();
             }
 
             if(input === 'n'){
