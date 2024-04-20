@@ -14,6 +14,7 @@ export interface IProcessor {
     getRegisters(): IRegisterBank;
     getPipeline(): PipelineStages;
     getAlu(): IAlu;
+    getPredictionProvider(): IPredictionProvider;
     getPc(): number;
     setPc(pc: number): void;
     getHalt(): boolean;
@@ -31,6 +32,7 @@ export interface IRegisterBank {
 }
 
 export interface Instruction {
+    instructionNumber: number
     unprocessedInstruction?: string;
     opcode?: string;
     operand1?: string;
@@ -39,6 +41,7 @@ export interface Instruction {
     handler?: (processor: IProcessor) => void;
     aluInputs?: number[];
     result?: number;
+    branchTaken?: boolean;
 }
 
 export interface PipelineStages {
@@ -62,6 +65,7 @@ export interface IAlu {
 export interface IBypassBuffer {
     storeInBuffer(register?: number, value?: number): void;
     readFromBuffer(register: number): number | undefined;
+    invalidateLastRegistries(): void;
 }
 
 export interface IBypassBufferData {
@@ -70,5 +74,14 @@ export interface IBypassBufferData {
 }
 export interface IDecoder {
     decode(processor: IProcessor): void;
+}
+
+export interface IPredictionHistoryTable {
+    [instructionBit: number]: boolean;
+}
+
+export interface IPredictionProvider {
+    getPrediction(instruction: number): boolean;
+    updatePrediction(instruction: number, prediction: boolean): void;
 }
 

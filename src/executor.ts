@@ -2,6 +2,7 @@ import { Alu } from "./alu";
 import { BypassBuffer } from "./bypassBuffer";
 import { Decoder } from "./decoder";
 import { IAlu, IDecoder, ILoader, IProcessor, IRegisterBank } from "./interfaces";
+import { PredictionProvider } from "./predictionProvider";
 import { Processor } from "./processor";
 import { ProgramLoader } from "./programLoader";
 import { RegisterBank } from "./registerBank";
@@ -15,7 +16,8 @@ const buildProcessor = (): IProcessor => {
     const registerBank: IRegisterBank = new RegisterBank();
     const alu: IAlu = new Alu(new BypassBuffer());
     const decoder: IDecoder = new Decoder();
-    return new Processor(loader, registerBank, alu, decoder);
+    const predictionProvider = new PredictionProvider();
+    return new Processor(loader, registerBank, alu, decoder, predictionProvider);
 }
 
 const displayMenu = (): string => {
@@ -34,6 +36,9 @@ const clock = (processor: IProcessor): void => {
 export const main = (): void => {
     try{
         const processor: IProcessor = buildProcessor();
+
+        const predictionProviderActive = Boolean(process.argv[3]);
+        console.log(`Prediction provider ${predictionProviderActive ? "ENABLED" : "DISABLED"}.\n`);
         
         prompt("Press ENTER to load the program from file.\n");
         processor.loadProgram();

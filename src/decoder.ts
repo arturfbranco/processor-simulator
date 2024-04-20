@@ -11,6 +11,7 @@ export class Decoder implements IDecoder {
 
         const [opcode, operand1, operand2, operand3] = decodeInstruction.unprocessedInstruction?.split(" ") || [];
         processor.getPipeline().decode = {
+            ...decodeInstruction,
             opcode,
             operand1,
             operand2,
@@ -107,8 +108,19 @@ export class Decoder implements IDecoder {
         const operand1 = this.getRegisterValue(processor, decodeStage.operand1);
         const operand2 = this.getRegisterValue(processor, decodeStage.operand2);
         const operand3 = parseInt(decodeStage.operand3 || "");
+        const usePredictionProvider: boolean = Boolean(process.argv[3]);
+
         decodeStage.aluInputs = [operand1, operand2, operand3];
         decodeStage.handler = processor.getAlu().beq.bind(processor.getAlu());
+        if(usePredictionProvider){
+            const branchTaken = processor.getPredictionProvider().getPrediction(decodeStage.instructionNumber);
+            decodeStage.branchTaken = branchTaken;
+            if(branchTaken){
+                processor.setPc(decodeStage.instructionNumber + operand3);
+            }
+        } else {
+            decodeStage.branchTaken = false;
+        }
     }
 
     private decodeStahl(processor: IProcessor): void {

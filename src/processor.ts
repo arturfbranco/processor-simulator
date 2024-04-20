@@ -1,4 +1,4 @@
-import { IAlu, IDecoder, ILoader, IProcessor, IRegisterBank, Opcodes, PipelineStages } from "./interfaces";
+import { IAlu, IDecoder, ILoader, IPredictionProvider, IProcessor, IRegisterBank, Opcodes, PipelineStages } from "./interfaces";
 import { cloneDeep } from "lodash";
 
 export class Processor implements IProcessor {
@@ -8,16 +8,18 @@ export class Processor implements IProcessor {
     private programLoader: ILoader;
     private registers: IRegisterBank;
     private pipeline: PipelineStages;
+    private predictionProvider: IPredictionProvider;
     private alu: IAlu;
     private decoder: IDecoder;
     private halt: boolean;
 
-    constructor(loader: ILoader, registerBank: IRegisterBank, alu: IAlu, decoder: IDecoder) {
+    constructor(loader: ILoader, registerBank: IRegisterBank, alu: IAlu, decoder: IDecoder, predictionProvider: IPredictionProvider) {
         this.pc = 0;
         this.programMemory = null;
         this.programLoader = loader;
         this.registers = registerBank;
         this.alu = alu;
+        this.predictionProvider = predictionProvider;
         this.decoder = decoder;
         this.pipeline = {
             fetch: null,
@@ -50,6 +52,10 @@ export class Processor implements IProcessor {
 
     public getAlu(): IAlu {
         return this.alu;
+    }
+
+    public getPredictionProvider(): IPredictionProvider {
+        return this.predictionProvider;
     }
 
     public getPc(): number {
@@ -94,6 +100,7 @@ export class Processor implements IProcessor {
         }
 
         this.pipeline.fetch = {
+            instructionNumber: this.pc,
             unprocessedInstruction: this.programMemory[this.pc]
         }
         this.pc++;
@@ -141,6 +148,7 @@ export class Processor implements IProcessor {
     
     private printPipeline(): void {
         console.log(this.pipeline);
+        this.registers.printRegisters();
     }
 
     private printPc(): void {

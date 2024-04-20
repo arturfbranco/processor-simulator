@@ -117,13 +117,32 @@ export class Alu implements IAlu {
         const usedOperand1 = operand1FromBuffer || operand1;
         const usedOperand2 = operand2FromBuffer || operand2;
 
+        const usePredictionProvider: boolean = Boolean(process.argv[3]);
+
         if(usedOperand1 === usedOperand2){
             console.log("Branch taken!\n");
-            processor.setPc(processor.getPc() + operand3 - 1);
 
-            if(!Boolean(process.argv[3])){
-                processor.getPipeline().fetch = null;
-                processor.getPipeline().decode = null;
+            if(usePredictionProvider){
+                if(!executeStage.branchTaken){
+                    processor.getPredictionProvider().updatePrediction(executeStage.instructionNumber, true)
+                    this.invalidateFetchAndDecodeInstructions(processor);
+                    this.bypassBuffer.invalidateLastRegistries();
+                }
+            } else {
+                this.invalidateFetchAndDecodeInstructions(processor);
+                this.bypassBuffer.invalidateLastRegistries();
+            }
+
+            if(!usePredictionProvider || !executeStage.branchTaken){
+                processor.setPc(processor.getPc() + operand3);
+            }
+        } else {
+            if(usePredictionProvider){
+                if(executeStage.branchTaken){
+                    processor.getPredictionProvider().updatePrediction(executeStage.instructionNumber, false)
+                    this.invalidateFetchAndDecodeInstructions(processor);
+                    this.bypassBuffer.invalidateLastRegistries();
+                }
             }
         }
         this.storeResultInBypassBuffer(processor);
@@ -131,6 +150,12 @@ export class Alu implements IAlu {
 
     public stahl(processor: IProcessor): void {
         this.storeResultInBypassBuffer(processor);
+    }
+
+    private invalidateFetchAndDecodeInstructions(processor: IProcessor): void {
+        processor.setPc(processor.getPipeline().execute!.instructionNumber);
+        processor.getPipeline().fetch = null;
+        processor.getPipeline().decode = null;
     }
 
     private storeResultInBypassBuffer(processor: IProcessor, targetRegister?: number): void {
