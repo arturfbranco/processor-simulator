@@ -21,10 +21,10 @@ export class Alu implements IAlu {
             console.log("Bypass buffer hit!\n");
         }
 
-        const [operand2, operand3] = executeStage.aluInputs || [];
+        const [operand2, operand3] = executeStage.aluInputs ?? [];
 
-        const usedOperand2 = operand2FromBuffer || operand2;
-        const usedOperand3 = operand3FromBuffer || operand3;
+        const usedOperand2 = operand2FromBuffer ?? operand2;
+        const usedOperand3 = operand3FromBuffer ?? operand3;
 
         const result = usedOperand2 + usedOperand3;
         executeStage.result = result;
@@ -43,9 +43,9 @@ export class Alu implements IAlu {
             console.log("Bypass buffer hit!\n");
         }
 
-        const [operand2, operand3] = executeStage.aluInputs || [];
+        const [operand2, operand3] = executeStage.aluInputs ?? [];
 
-        const usedOperand2 = operand2FromBuffer || operand2;
+        const usedOperand2 = operand2FromBuffer ?? operand2;
 
         const result = usedOperand2 + operand3;
         executeStage.result = result;
@@ -65,10 +65,10 @@ export class Alu implements IAlu {
             console.log("Bypass buffer hit!\n");
         }
 
-        const [operand2, operand3] = executeStage.aluInputs || [];
+        const [operand2, operand3] = executeStage.aluInputs ?? [];
 
-        const usedOperand2 = operand2FromBuffer || operand2;
-        const usedOperand3 = operand3FromBuffer || operand3;
+        const usedOperand2 = operand2FromBuffer ?? operand2;
+        const usedOperand3 = operand3FromBuffer ?? operand3;
 
         const result = usedOperand2 - usedOperand3;
         executeStage.result = result;
@@ -86,9 +86,9 @@ export class Alu implements IAlu {
         if(operand2FromBuffer){
             console.log("Bypass buffer hit!\n");
         }
-        const [operand2, operand3] = executeStage.aluInputs || [];
+        const [operand2, operand3] = executeStage.aluInputs ?? [];
 
-        const usedOperand2 = operand2FromBuffer || operand2;
+        const usedOperand2 = operand2FromBuffer ?? operand2;
 
         const result = usedOperand2 - operand3;
         executeStage.result = result;
@@ -108,14 +108,14 @@ export class Alu implements IAlu {
         const operand1FromBuffer: number | undefined = this.bypassBuffer.readFromBuffer(parseInt(executeStage.operand1!));
         const operand2FromBuffer: number | undefined = this.bypassBuffer.readFromBuffer(parseInt(executeStage.operand2!));
 
-        if(operand1FromBuffer || operand2FromBuffer){
+        if(operand1FromBuffer ?? operand2FromBuffer){
             console.log("Bypass buffer hit!\n");
         }
 
-        const [operand1, operand2, operand3] = executeStage.aluInputs || [];
+        const [operand1, operand2, operand3] = executeStage.aluInputs ?? [];
 
-        const usedOperand1 = operand1FromBuffer || operand1;
-        const usedOperand2 = operand2FromBuffer || operand2;
+        const usedOperand1 = operand1FromBuffer ?? operand1;
+        const usedOperand2 = operand2FromBuffer ?? operand2;
 
         const usePredictionProvider: boolean = Boolean(process.argv[3]);
 
@@ -133,7 +133,7 @@ export class Alu implements IAlu {
                 this.bypassBuffer.invalidateLastRegistries();
             }
 
-            if(!usePredictionProvider || !executeStage.branchTaken){
+            if(!usePredictionProvider ?? !executeStage.branchTaken){
                 processor.setPc(processor.getPc() + operand3);
             }
         } else {

@@ -11,12 +11,12 @@ export class PredictionProvider implements IPredictionProvider {
 
     public getPrediction(instruction: number): boolean {
         const instructionBits: number[] = this.getInstructionBits(instruction);
-        return Boolean(this.predictionHistoryTable[instructionBits.length - 1]);
+        return Boolean(this.predictionHistoryTable[instructionBits[instructionBits.length - 1]]);
     }
 
     public updatePrediction(instruction: number, prediction: boolean): void {
         const instructionBits: number[] = this.getInstructionBits(instruction);
-        this.predictionHistoryTable[instructionBits.length - 1] = prediction;
+        this.predictionHistoryTable[instructionBits[instructionBits.length - 1]] = prediction;
     }
 
     private getInstructionBits(instruction: number): number[] {
