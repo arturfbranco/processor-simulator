@@ -2,6 +2,8 @@ import { Alu } from "./alu";
 import { BypassBuffer } from "./bypassBuffer";
 import { Decoder } from "./decoder";
 import { IAlu, IDecoder, ILoader, IProcessor, IRegisterBank } from "./interfaces";
+import { activateLogger, shouldLogState } from "./logger";
+import { measurePerformance } from "./performanceMeasure";
 import { PredictionProvider } from "./predictionProvider";
 import { Processor } from "./processor";
 import { ProgramLoader } from "./programLoader";
@@ -39,6 +41,11 @@ export const main = (): void => {
 
         const predictionProviderActive = Boolean(process.argv[3]);
         console.log(`Prediction provider ${predictionProviderActive ? "ENABLED" : "DISABLED"}.\n`);
+        console.log("Should log processor state? (y/n)\n");
+        const logProcessorState = prompt("");
+        if(logProcessorState === 'y'){
+            activateLogger();
+        }
         
         prompt("Press ENTER to load the program from file.\n");
         processor.loadProgram();
@@ -53,22 +60,26 @@ export const main = (): void => {
             return;
         }
 
-        let shouldLoop = true; 
-        while(shouldLoop){
-            clock(processor);
-            let input;
-            if(shouldStop){
-                input = displayMenu();
-            }
+        let shouldLoop = true;
 
-            if(input === 'n'){
-                shouldStop = false;
+        measurePerformance(() => {
+            while(shouldLoop){
+                clock(processor);
+                let input;
+                if(shouldStop){
+                    input = displayMenu();
+                }
+    
+                if(input === 'n'){
+                    shouldStop = false;
+                }
+                if(input === 'q' || (processor.getHalt() && processor.emptyPipeline())){
+                    shouldLoop = false;
+                    processor.getRegisters().printRegisters();
+                }
             }
-            if(input === 'q' || (processor.getHalt() && processor.emptyPipeline())){
-                shouldLoop = false;
-                processor.getRegisters().printRegisters();
-            }
-        }
+        });
+
     } catch(e){
         console.error(e);
         return;

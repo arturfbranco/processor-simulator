@@ -1,5 +1,6 @@
 import { IAlu, IDecoder, ILoader, IPredictionProvider, IProcessor, IRegisterBank, Opcodes, PipelineStages } from "./interfaces";
 import { cloneDeep } from "lodash";
+import { shouldLogState } from "./logger";
 
 export class Processor implements IProcessor {
 
@@ -80,7 +81,9 @@ export class Processor implements IProcessor {
     }
 
     private runStages(): void {
-        console.log(`Running stages for PC: ${this.pc}...\n`);
+        if(shouldLogState()){
+            console.log(`Running stages for PC: ${this.pc}...\n`);
+        }
         this.runWriteback();
         this.runMemory();
         this.runExecute();
@@ -147,11 +150,9 @@ export class Processor implements IProcessor {
     }
     
     private printPipeline(): void {
-        console.log(this.pipeline);
-        this.registers.printRegisters();
-    }
-
-    private printPc(): void {
-        console.log(`PC: ${this.pc}\n`);
+        if(shouldLogState()){
+            console.log(this.pipeline);
+            this.registers.printRegisters();
+        }
     }
 }

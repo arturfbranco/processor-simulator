@@ -1,4 +1,5 @@
 import { IAlu, IBypassBuffer, IProcessor } from "./interfaces";
+import { shouldLogState } from "./logger";
 
 export class Alu implements IAlu {
 
@@ -17,7 +18,7 @@ export class Alu implements IAlu {
         const operand2FromBuffer: number | undefined = this.bypassBuffer.readFromBuffer(parseInt(executeStage.operand2!));
         const operand3FromBuffer: number | undefined = this.bypassBuffer.readFromBuffer(parseInt(executeStage.operand3!));
 
-        if(operand2FromBuffer || operand3FromBuffer){
+        if((operand2FromBuffer || operand3FromBuffer) && shouldLogState()){
             console.log("Bypass buffer hit!\n");
         }
 
@@ -39,7 +40,7 @@ export class Alu implements IAlu {
 
         const operand2FromBuffer: number | undefined = this.bypassBuffer.readFromBuffer(parseInt(executeStage.operand2!));
 
-        if(operand2FromBuffer){
+        if(operand2FromBuffer && shouldLogState()){
             console.log("Bypass buffer hit!\n");
         }
 
@@ -61,7 +62,7 @@ export class Alu implements IAlu {
         const operand2FromBuffer: number | undefined = this.bypassBuffer.readFromBuffer(parseInt(executeStage.operand2!));
         const operand3FromBuffer: number | undefined = this.bypassBuffer.readFromBuffer(parseInt(executeStage.operand3!));
 
-        if(operand2FromBuffer || operand3FromBuffer){
+        if((operand2FromBuffer || operand3FromBuffer) && shouldLogState()){
             console.log("Bypass buffer hit!\n");
         }
 
@@ -83,7 +84,7 @@ export class Alu implements IAlu {
 
         const operand2FromBuffer: number | undefined = this.bypassBuffer.readFromBuffer(parseInt(executeStage.operand2!));
 
-        if(operand2FromBuffer){
+        if(operand2FromBuffer && shouldLogState()){
             console.log("Bypass buffer hit!\n");
         }
         const [operand2, operand3] = executeStage.aluInputs ?? [];
@@ -108,7 +109,7 @@ export class Alu implements IAlu {
         const operand1FromBuffer: number | undefined = this.bypassBuffer.readFromBuffer(parseInt(executeStage.operand1!));
         const operand2FromBuffer: number | undefined = this.bypassBuffer.readFromBuffer(parseInt(executeStage.operand2!));
 
-        if(operand1FromBuffer ?? operand2FromBuffer){
+        if((operand1FromBuffer ?? operand2FromBuffer) && shouldLogState()){
             console.log("Bypass buffer hit!\n");
         }
 
@@ -120,7 +121,9 @@ export class Alu implements IAlu {
         const usePredictionProvider: boolean = Boolean(process.argv[3]);
 
         if(usedOperand1 === usedOperand2){
-            console.log("Branch taken!\n");
+            if(shouldLogState()){
+                console.log("Branch taken!\n");
+            }
 
             if(usePredictionProvider){
                 if(!executeStage.branchTaken){
