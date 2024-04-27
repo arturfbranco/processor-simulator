@@ -60,6 +60,7 @@ export interface IAlu {
     j(processor: IProcessor): void;
     beq(processor: IProcessor): void;
     stahl(processor: IProcessor): void;
+    printStats(): void;
 }
 
 export interface IBypassBuffer {
