@@ -103,6 +103,7 @@ export class Alu implements IAlu {
     }
 
     public j(processor: IProcessor): void {
+        this.executions++
         return;
     }
 
@@ -165,9 +166,10 @@ export class Alu implements IAlu {
 
     private invalidateFetchAndDecodeInstructions(processor: IProcessor): void {
         processor.setPc(processor.getPipeline().execute!.instructionNumber);
+        if (processor.getPipeline().fetch != null) 
         processor.getPipeline().fetch = null;
         processor.getPipeline().decode = null;
-        this.invalidFetches++;
+        this.invalidFetches += 2;
     }
 
     private storeResultInBypassBuffer(processor: IProcessor, targetRegister?: number): void {
