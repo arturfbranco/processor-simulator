@@ -4,6 +4,8 @@ import { shouldLogState } from "./logger";
 export class Alu implements IAlu {
 
     private bypassBuffer: IBypassBuffer;
+    private executions: 0 = 0; 
+    private invalidFetches: 0 = 0; 
 
     constructor(bypassBuffer: IBypassBuffer){
         this.bypassBuffer = bypassBuffer;
@@ -30,6 +32,7 @@ export class Alu implements IAlu {
         const result = usedOperand2 + usedOperand3;
         executeStage.result = result;
         this.storeResultInBypassBuffer(processor, parseInt(executeStage.operand1!));
+        this.executions++;
     }
 
     public addi(processor: IProcessor): void {
@@ -51,6 +54,7 @@ export class Alu implements IAlu {
         const result = usedOperand2 + operand3;
         executeStage.result = result;
         this.storeResultInBypassBuffer(processor, parseInt(executeStage.operand1!));
+        this.executions++;
     }
 
     public sub(processor: IProcessor): void {
@@ -74,6 +78,7 @@ export class Alu implements IAlu {
         const result = usedOperand2 - usedOperand3;
         executeStage.result = result;
         this.storeResultInBypassBuffer(processor, parseInt(executeStage.operand1!));
+        this.executions++;
     }
 
     public subi(processor: IProcessor): void {
@@ -94,6 +99,7 @@ export class Alu implements IAlu {
         const result = usedOperand2 - operand3;
         executeStage.result = result;
         this.storeResultInBypassBuffer(processor, parseInt(executeStage.operand1!));
+        this.executions++;
     }
 
     public j(processor: IProcessor): void {
@@ -149,16 +155,19 @@ export class Alu implements IAlu {
             }
         }
         this.storeResultInBypassBuffer(processor);
+        this.executions++;
     }
 
     public stahl(processor: IProcessor): void {
         this.storeResultInBypassBuffer(processor);
+        this.executions++;
     }
 
     private invalidateFetchAndDecodeInstructions(processor: IProcessor): void {
         processor.setPc(processor.getPipeline().execute!.instructionNumber);
         processor.getPipeline().fetch = null;
         processor.getPipeline().decode = null;
+        this.invalidFetches++;
     }
 
     private storeResultInBypassBuffer(processor: IProcessor, targetRegister?: number): void {
@@ -167,6 +176,11 @@ export class Alu implements IAlu {
             return;
         }
         this.bypassBuffer.storeInBuffer(targetRegister, executeStage.result!);
+    }
+
+    public printStats(): void {
+        console.log(`Instruções executadas ${this.executions}.`);
+        console.log(`Instruções inválidas buscadas ${this.invalidFetches}.\n`);
     }
 
 }
