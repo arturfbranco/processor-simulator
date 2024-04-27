@@ -1,5 +1,6 @@
-import { IAlu, IDecoder, ILoader, IProcessor, IRegisterBank, Opcodes, PipelineStages } from "./interfaces";
+import { IAlu, IDecoder, ILoader, IPredictionProvider, IProcessor, IRegisterBank, Opcodes, PipelineStages } from "./interfaces";
 import { cloneDeep } from "lodash";
+import { shouldLogState } from "./logger";
 
 export class Processor implements IProcessor {
 
@@ -8,16 +9,18 @@ export class Processor implements IProcessor {
     private programLoader: ILoader;
     private registers: IRegisterBank;
     private pipeline: PipelineStages;
+    private predictionProvider: IPredictionProvider;
     private alu: IAlu;
     private decoder: IDecoder;
     private halt: boolean;
 
-    constructor(loader: ILoader, registerBank: IRegisterBank, alu: IAlu, decoder: IDecoder) {
+    constructor(loader: ILoader, registerBank: IRegisterBank, alu: IAlu, decoder: IDecoder, predictionProvider: IPredictionProvider) {
         this.pc = 0;
         this.programMemory = null;
         this.programLoader = loader;
         this.registers = registerBank;
         this.alu = alu;
+        this.predictionProvider = predictionProvider;
         this.decoder = decoder;
         this.pipeline = {
             fetch: null,
@@ -52,6 +55,10 @@ export class Processor implements IProcessor {
         return this.alu;
     }
 
+    public getPredictionProvider(): IPredictionProvider {
+        return this.predictionProvider;
+    }
+
     public getPc(): number {
         return this.pc;
     }
@@ -74,7 +81,9 @@ export class Processor implements IProcessor {
     }
 
     private runStages(): void {
-        console.log(`Running stages for PC: ${this.pc}...\n`);
+        if(shouldLogState()){
+            console.log(`Running stages for PC: ${this.pc}...\n`);
+        }
         this.runWriteback();
         this.runMemory();
         this.runExecute();
@@ -94,6 +103,7 @@ export class Processor implements IProcessor {
         }
 
         this.pipeline.fetch = {
+            instructionNumber: this.pc,
             unprocessedInstruction: this.programMemory[this.pc]
         }
         this.pc++;
@@ -140,10 +150,9 @@ export class Processor implements IProcessor {
     }
     
     private printPipeline(): void {
-        console.log(this.pipeline);
-    }
-
-    private printPc(): void {
-        console.log(`PC: ${this.pc}\n`);
+        if(shouldLogState()){
+            console.log(this.pipeline);
+            this.registers.printRegisters();
+        }
     }
 }

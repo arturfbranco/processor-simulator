@@ -9,12 +9,12 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/lodash": "^4.17.0",
     "@types/node": "^20.12.5",
     "@types/prompt-sync": "^4.2.3",
     "typescript": "^5.4.4"
   },
   "dependencies": {
-    "@types/lodash": "^4.17.0",
     "lodash": "^4.17.21",
     "prompt-sync": "^4.2.0"
   }
