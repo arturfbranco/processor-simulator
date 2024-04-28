@@ -9,7 +9,7 @@
             ],
             "console": "integratedTerminal",
             "type": "node",
-            "args": ["${workspaceFolder}/program.txt"]
+            "args": ["${workspaceFolder}/multiplier.txt", "true"]
         }
 
     ]

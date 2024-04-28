@@ -1,5 +1,5 @@
 addi 1 0 -1
-addi 2 0 10000000
+addi 2 0 10000
 addi 3 0 0
 add 2 1 2
 beq 2 3 2
