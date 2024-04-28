@@ -9,8 +9,13 @@ Setup:
 3. 
    To run the program in VS Code: in Debug tab, click Launch Program
 
+Prediction method:
+The program accepts a second argument to state the prediction method to be used in conditional branches. If its value equals null, it will always consider branches as "not taken"; if it exists a prediction table history will be used.
+
 
 Branches:
+
+master: final version
 
 v1: processor version without any hazard management.
 
