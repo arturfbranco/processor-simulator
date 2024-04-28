@@ -75,7 +75,9 @@ export const main = (): void => {
                 }
                 if(input === 'q' || (processor.getHalt() && processor.emptyPipeline())){
                     shouldLoop = false;
-                    processor.getRegisters().printRegisters();
+                    if(!shouldLogState()){
+                        processor.getRegisters().printRegisters();
+                    }
                     console.log(`Prediction provider ${predictionProviderActive ? "ENABLED" : "DISABLED"}.\n`);
                     processor.getAlu().printStats();
                 }
